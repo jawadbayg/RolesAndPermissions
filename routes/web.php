@@ -14,6 +14,10 @@ Route::get('/', function () {
 Auth::routes();
   
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+// Route::group(['middleware' => ['role:admin']], function () {
+//     Route::get('users', [UserController::class, 'index']);
+// });
+
   
 Route::group(['middleware' => ['auth']], function() {
     Route::resource('roles', RoleController::class);
