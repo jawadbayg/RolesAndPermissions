@@ -11,11 +11,13 @@ class ProductActionNotification extends Notification
 
     protected $action;
     protected $product;
+    public $actor;
 
-    public function __construct(string $action, $product)
+    public function __construct(string $action, $product, $actor)
     {
         $this->action = $action; 
         $this->product = $product; 
+        $this->actor = $actor; 
     }
 
     public function via($notifiable)
@@ -28,6 +30,10 @@ class ProductActionNotification extends Notification
         return [
             'action' => $this->action,
             'product' => $this->product, 
+            'actor' => [
+                'id' => $this->actor->id,
+                'name' => $this->actor->name,
+            ],
         ];
     }
 }

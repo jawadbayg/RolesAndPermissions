@@ -59,21 +59,13 @@ class ProductController extends Controller
             'name' => 'required',
             'detail' => 'required',
         ]);
-
+    
         $product = Product::create($request->all());
-        $admin = User::whereHas('roles', function ($query) {
-            $query->where('name', 'Admin'); 
-        })->first();
-
-        if ($admin) {
-            $notification = new ProductActionNotification('created', $product);
-            
-            Notification::send($admin, $notification);
-        }
-
+    
         return redirect()->route('products.index')
                         ->with('success', 'Product created successfully.');
     }
+    
 
     
     /**

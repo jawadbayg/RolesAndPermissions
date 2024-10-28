@@ -68,40 +68,4 @@
 
 {!! $products->links() !!}
 
-<p class="text-center text-primary"><small>Tutorial by ItSolutionStuff.com</small></p>
-@endsection
-
-@section('scripts')
-<!-- <script>
-$(document).ready(function() {
-    
-    function fetchNotifications() {
-        $.ajax({
-            url: '/notifications', 
-            method: 'GET',
-            success: function(data) {
-                var notificationsHtml = '';
-                if (data.length > 0) {
-                    data.forEach(function(notification) {
-                        notificationsHtml += '<div class="notification">';
-                        notificationsHtml += '<h5>' + notification.data.title + '</h5>'; 
-                        notificationsHtml += '<p>' + notification.data.message + '</p>'; 
-                        notificationsHtml += '<small>' + notification.created_at + '</small>'; 
-                        notificationsHtml += '</div>';
-                    });
-                } else {
-                    notificationsHtml = '<p>No new notifications.</p>';
-                }
-                $('#notification-list').html(notificationsHtml);
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching notifications:', error);
-            }
-        });
-    }
-
-    
-    fetchNotifications();
-});
-</script> -->
 @endsection
