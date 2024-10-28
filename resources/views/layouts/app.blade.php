@@ -17,6 +17,23 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+   
+<script>
+    @if(Auth::check())  // Check if the user is authenticated
+        const isAdmin = @json(Auth::user()->hasRole('Admin'));
+        const userId = {{ Auth::id() }}; // Get the user ID
+
+        if (isAdmin) {
+            Echo.private(`App.Models.User.${userId}`)
+                .notification((notification) => {
+                    // Update notification bell or display the notification
+                    alert(notification.message);
+                });
+        }
+    @endif
+</script>
+
+
 </head>
 <body>
     <div id="app">

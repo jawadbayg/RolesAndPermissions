@@ -6,6 +6,8 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use App\Notifications\ProductActionNotification;
+use App\Models\User;
     
 class ProductController extends Controller
 { 
@@ -50,18 +52,23 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
-        request()->validate([
-            'name' => 'required',
-            'detail' => 'required',
-        ]);
+        $request->validate(['name' => 'required', 'detail' => 'required']);
+        $product = Product::create($request->all());
+        $action = 'created';
+        // Notify admins
+        $admins = User::whereHas('roles', function ($query) {
+            $query->where('name', 'Admin');
+        })->get();
     
-        Product::create($request->all());
-    
-        return redirect()->route('products.index')
-                        ->with('success','Product created successfully.');
+    foreach ($admins as $admin) {
+        $admin->notify(new ProductActionNotification($product, $action));
     }
+    
+        return redirect()->route('products.index')->with('success', 'Product created successfully.');
+    }
+    
     
     /**
      * Display the specified resource.

@@ -14,11 +14,29 @@
     </div>
 </div>
 
-@session('success')
+@if(session('success'))
     <div class="alert alert-success" role="alert"> 
-        {{ $value }}
+        {{ session('success') }}
     </div>
-@endsession
+@endif
+
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <h3>Notifications</h3>
+        @if (Auth::user()->notifications->isEmpty())
+            <p>No notifications</p>
+        @else
+            <ul class="list-group">
+                @foreach (Auth::user()->notifications as $notification)
+                    <li class="list-group-item">
+                        {{ $notification->data['message'] }}
+                        <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+    </div>
+</div>
 
 <table class="table table-bordered">
     <tr>
@@ -33,10 +51,10 @@
         <td>{{ $product->name }}</td>
         <td>{{ $product->detail }}</td>
         <td>
-            <form action="{{ route('products.destroy',$product->id) }}" method="POST">
-                <a class="btn btn-info btn-sm" href="{{ route('products.show',$product->id) }}"><i class="fa-solid fa-list"></i> Show</a>
+            <form action="{{ route('products.destroy', $product->id) }}" method="POST">
+                <a class="btn btn-info btn-sm" href="{{ route('products.show', $product->id) }}"><i class="fa-solid fa-list"></i> Show</a>
                 @can('product-edit')
-                <a class="btn btn-primary btn-sm" href="{{ route('products.edit',$product->id) }}"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                <a class="btn btn-primary btn-sm" href="{{ route('products.edit', $product->id) }}"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
                 @endcan
 
                 @csrf
