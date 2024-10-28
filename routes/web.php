@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\NotificationController;
    
 Route::get('/', function () {
     return view('welcome');
@@ -24,3 +25,6 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('users', UserController::class);
     Route::resource('products', ProductController::class);
 });
+// In web.php
+Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+

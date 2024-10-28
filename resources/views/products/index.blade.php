@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <div class="row">
     <div class="col-lg-12 margin-tb">
         <div class="pull-left">
@@ -20,6 +22,19 @@
     </div>
 @endsession
 
+<!-- Notifications Section -->
+<div id="notifications" class="mb-4">
+    <h3>Notifications</h3>
+    <div id="notification-list">
+        <!-- Notifications will be populated here by AJAX -->
+    </div>
+</div>
+<button id="test-sound">Test Sound</button>
+<script>
+    $('#test-sound').click(function() {
+        playBellSound();
+    });
+</script>
 <table class="table table-bordered">
     <tr>
         <th>No</th>
@@ -33,10 +48,10 @@
         <td>{{ $product->name }}</td>
         <td>{{ $product->detail }}</td>
         <td>
-            <form action="{{ route('products.destroy',$product->id) }}" method="POST">
-                <a class="btn btn-info btn-sm" href="{{ route('products.show',$product->id) }}"><i class="fa-solid fa-list"></i> Show</a>
+            <form action="{{ route('products.destroy', $product->id) }}" method="POST">
+                <a class="btn btn-info btn-sm" href="{{ route('products.show', $product->id) }}"><i class="fa-solid fa-list"></i> Show</a>
                 @can('product-edit')
-                <a class="btn btn-primary btn-sm" href="{{ route('products.edit',$product->id) }}"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                <a class="btn btn-primary btn-sm" href="{{ route('products.edit', $product->id) }}"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
                 @endcan
 
                 @csrf
@@ -54,4 +69,39 @@
 {!! $products->links() !!}
 
 <p class="text-center text-primary"><small>Tutorial by ItSolutionStuff.com</small></p>
+@endsection
+
+@section('scripts')
+<!-- <script>
+$(document).ready(function() {
+    
+    function fetchNotifications() {
+        $.ajax({
+            url: '/notifications', 
+            method: 'GET',
+            success: function(data) {
+                var notificationsHtml = '';
+                if (data.length > 0) {
+                    data.forEach(function(notification) {
+                        notificationsHtml += '<div class="notification">';
+                        notificationsHtml += '<h5>' + notification.data.title + '</h5>'; 
+                        notificationsHtml += '<p>' + notification.data.message + '</p>'; 
+                        notificationsHtml += '<small>' + notification.created_at + '</small>'; 
+                        notificationsHtml += '</div>';
+                    });
+                } else {
+                    notificationsHtml = '<p>No new notifications.</p>';
+                }
+                $('#notification-list').html(notificationsHtml);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching notifications:', error);
+            }
+        });
+    }
+
+    
+    fetchNotifications();
+});
+</script> -->
 @endsection

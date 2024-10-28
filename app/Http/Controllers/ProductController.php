@@ -6,7 +6,10 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-    
+use App\Models\User; // Import the User model
+use App\Notifications\ProductActionNotification; 
+use Illuminate\Support\Facades\Notification;
+
 class ProductController extends Controller
 { 
     /**
@@ -52,16 +55,26 @@ class ProductController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        request()->validate([
+        $request->validate([
             'name' => 'required',
             'detail' => 'required',
         ]);
-    
-        Product::create($request->all());
-    
+
+        $product = Product::create($request->all());
+        $admin = User::whereHas('roles', function ($query) {
+            $query->where('name', 'Admin'); 
+        })->first();
+
+        if ($admin) {
+            $notification = new ProductActionNotification('created', $product);
+            
+            Notification::send($admin, $notification);
+        }
+
         return redirect()->route('products.index')
-                        ->with('success','Product created successfully.');
+                        ->with('success', 'Product created successfully.');
     }
+
     
     /**
      * Display the specified resource.

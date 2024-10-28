@@ -4,22 +4,36 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
-    <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+8hb3M23Rj9C1kGQFl5Ff6cA9LxFSrH6eZxG8fC" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+    #notification-area {
+    position: fixed; 
+    top: 10px;
+    right: 10px; 
+    z-index: 1000; 
+    }
+
+    .notification {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        padding: 10px; 
+        margin-bottom: 5px;
+        border-radius: 5px;
+    }
+</style>
 </head>
 <body>
     <div id="app">
+    <div id="notification-area"></div>
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
@@ -30,14 +44,10 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
 
                     </ul>
-
-                    <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
-                        <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
@@ -94,5 +104,48 @@
         </main>
         
     </div>
+
+    <script>
+    function playBellSound() {
+        var audio = new Audio('/notification.mp3'); 
+        audio.play().catch(function(error) {
+            console.error("Error playing sound:", error);
+        });
+    }
+
+    function fetchNotifications() {
+        $.ajax({
+            url: '/notifications',
+            method: 'GET',
+            success: function(notifications) {
+                $('#notification-area').empty();
+                let newNotificationCount = 0;
+                let previousNotificationCount = 0;
+
+                notifications.forEach(function(notification) {
+                    $('#notification-area').append(
+                        `<div class="notification">
+                            ${notification.data.action} - ${notification.data.product.name}
+                        </div>`
+                    );
+                    newNotificationCount++;
+                    console.log("New notification count:", newNotificationCount);
+                });
+                if (newNotificationCount > previousNotificationCount) {
+                    playBellSound();
+            }
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+            }
+        });
+    }
+
+    setInterval(fetchNotifications, 5000);
+
+    $(document).ready(function() {
+        fetchNotifications();
+    });
+</script>
 </body>
 </html>
